@@ -6,10 +6,11 @@ from email.message import EmailMessage
 import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
+import argparse
 
 logging.basicConfig(level=logging.INFO)
 
-def send_email(subject, body, target_emails=["desmondboateng@u.boisestate.edu", "alessiobarboni@u.boisestate.edu"]):
+def send_email(subject, body, target_emails):
     logging.info(f"Sending email to {', '.join(target_emails)} regarding error")
     email_address = 'capewesley1@gmail.com'
     email_password = 'szlu cyer vcdo wyna'
@@ -29,7 +30,7 @@ def send_email(subject, body, target_emails=["desmondboateng@u.boisestate.edu", 
     except Exception as e:
         logging.error(f"Error: email not sent, continuing... {e}")
 
-def check_apartment_availability():
+def check_apartment_availability(target_emails):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     data = {
         "Community": ["No Apartments Currently Available"],
@@ -68,13 +69,25 @@ def check_apartment_availability():
     if apartments_available:
         df = pd.DataFrame(data)
         body = f"Available apartments in University as at {current_time}: \n{df.to_string()}"
-        send_email("Apartments Available", body)
+        send_email("Apartments Available", body, target_emails)
     else:
-        send_email("No Apartments Available in University Village ", f"There are no apartments available as at {current_time}.")
+        send_email("No Apartments Available in University Village", f"There are no apartments available as at {current_time}.", target_emails)
 
-def job():
-    check_apartment_availability()
+def job(target_emails):
+    check_apartment_availability(target_emails)
 
-scheduler = BlockingScheduler()
-scheduler.add_job(job, 'interval', minutes=10)
-scheduler.start()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Apartment Availability Checker")
+    parser.add_argument(
+        '--emails',
+        nargs='+',
+        required=True,
+        help='List of recipient email addresses (space-separated)'
+    )
+    args = parser.parse_args()
+    target_emails = args.emails
+
+    scheduler = BlockingScheduler()
+    scheduler.add_job(job, 'cron', hour=2, minute=0, args=[target_emails])
+    scheduler.start()
+
