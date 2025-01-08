@@ -41,9 +41,9 @@ def check_apartment_availability(target_emails):
     url = 'https://www.boisestate.edu/housing-apartments/apartments-availability/'
     response = requests.get(url)
     if response.status_code == 200:
-        print('Request is successful')
+        logging.info('Request is successful')
     else:
-        print('Request is unsuccessful')
+        logging.error('Request is unsuccessful')
     soup = BeautifulSoup(response.text, 'html.parser')
     table = soup.find('table')
     apartments_available = False
@@ -65,7 +65,7 @@ def check_apartment_availability(target_emails):
                     data["Date Available"].append(date_available)
                     data["Status"].append(status)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logging.error(f"An error occurred: {e}")
     if apartments_available:
         df = pd.DataFrame(data)
         body = f"Available apartments in University as at {current_time}: \n{df.to_string()}"
@@ -88,6 +88,9 @@ if __name__ == "__main__":
     target_emails = args.emails
 
     scheduler = BlockingScheduler()
-    scheduler.add_job(job, 'cron', hour=2, minute=0, args=[target_emails])
-    scheduler.start()
-
+    scheduler.add_job(job, 'interval', minutes=30, args=[target_emails])
+    logging.info("Scheduler started. The job will run every hour.")
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        logging.info("Scheduler stopped.")
