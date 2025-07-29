@@ -14,7 +14,7 @@ This script automates checking apartment availability from the Boise State Unive
 ---
 
 ## Description
-The script scrapes apartment availability data from the Boise State University housing webpage and notifies specified recipients if apartments are available. It runs periodically using the APScheduler library.
+The script scrapes apartment availability data from the [Boise State University Housing Apartments Availability](https://www.boisestate.edu/housing-apartments/apartments-availability/)housing webpage and notifies specified recipients if apartments are available. It runs periodically using the APScheduler library.
 
 ---
 
@@ -28,8 +28,7 @@ The script scrapes apartment availability data from the Boise State University h
 
 ## Prerequisites
 1. Python 3.8+
-2. Gmail account with **App Password** enabled (for sending emails)
-3. Required libraries:
+2. Required libraries:
     - `requests`
     - `beautifulsoup4`
     - `pandas`
@@ -55,18 +54,14 @@ cd <project_directory>
 
 ---
 
-## Usage
-1. **Setup your Gmail App Password**
-    - Go to your Google Account -> Security.
-    - Enable 2-Step Verification.
-    - Generate an App Password (e.g., for "Mail" and "Other").
+## App Usage 
 
-2. **Run the Script**:
+1. **Run the Script**:
 
 Use the following command with recipient email addresses:
 
 ```bash
-python apartment_checker.py --emails email1@example.com email2@example.com
+python apartment_checker.py --emails email1@example.com --duration 2 --unit days
 ```
 
 Replace `email1@example.com email2@example.com` with the target email addresses where notifications should be sent.
@@ -95,15 +90,15 @@ This project is licensed under the MIT License. Feel free to modify and distribu
 ---
 
 ## Troubleshooting
-- Ensure your Gmail account has **App Passwords** enabled.
 - Check if your libraries are installed correctly using `pip list`.
 - Verify the webpage URL (`https://www.boisestate.edu/housing-apartments/apartments-availability/`) is accessible.
-- Enable "Allow Less Secure Apps" in your Gmail account settings (if required).
 
 ---
 
 ## Author
 Desmond Kofi Boateng
+PhD Student, Boise State University
+GitHub: @kofidesmondML
 
 ---
 

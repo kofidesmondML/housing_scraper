@@ -12,8 +12,8 @@ logging.basicConfig(level=logging.INFO)
 
 def send_email(subject, body, target_emails):
     logging.info(f"Sending email to {', '.join(target_emails)} regarding error")
-    email_address = 'capewesley1@gmail.com'
-    email_password = 'szlu cyer vcdo wyna'
+    email_address = 'checkerapartment@gmail.com'
+    email_password = 'cbfu faes aspt sotm'
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     body = f"{body}\n\nEmail sent on: {current_time}"
     msg = EmailMessage()
@@ -71,7 +71,7 @@ def check_apartment_availability(target_emails):
         body = f"Available apartments in University as at {current_time}: \n{df.to_string()}"
         send_email("Apartments Available", body, target_emails)
     else:
-        send_email("No Apartments Available in University Village", f"There are no apartments available as at {current_time}.", target_emails)
+        send_email("No Apartments Available in University Village and Heights", f"There are no apartments available as at {current_time}.", target_emails)
 
 def job(target_emails):
     check_apartment_availability(target_emails)
@@ -84,12 +84,26 @@ if __name__ == "__main__":
         required=True,
         help='List of recipient email addresses (space-separated)'
     )
+    parser.add_argument(
+        '--duration',
+        type=int,
+        required=True,
+        help='Interval between updates'
+    )
+    parser.add_argument(
+        '--unit', 
+        choices=['seconds', 'minutes', 'hours', 'days', 'weeks'],
+        required=True, 
+        help='Unit of time for the duration'
+    )
     args = parser.parse_args()
     target_emails = args.emails
+    duration=args.duration
+    unit=args.unit       
 
     scheduler = BlockingScheduler()
-    scheduler.add_job(job, 'interval', minutes=30, args=[target_emails])
-    logging.info("Scheduler started. The job will run every hour.")
+    scheduler.add_job(job, 'interval', **{unit: duration}, args=[target_emails])
+    logging.info(f"Scheduler started. The job will run every {duration} {unit}.")
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
